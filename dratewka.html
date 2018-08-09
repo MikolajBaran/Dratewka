@@ -1,0 +1,599 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Gra</title>
+    <meta charset="UTF-8"/>
+    <style>
+        @font-face {
+            font-family: 'PressStart2P';
+            src: url('fonts/PressStart2P.ttf') format('truetype');
+        }
+        body{
+           background-color: rgb(57,57,57);
+           color: rgb(165,172,178);
+           width: 100%;
+           height: 100%;
+           font-family: PressStart2P;
+           font-size: 30px;
+           overflow: hidden;
+         }
+    </style>
+    
+    
+    <script>
+        function Lokacja() { this.miejsce = arguments[0]; this.kierunki = arguments[1]; this.img = arguments[2]; this.kolor = arguments[3]; this.item = arguments[4]; }
+        function menu() {
+
+            var locationDes = document.createElement("div");
+            locationDes.id = "locationDes";
+            locationDes.style.position = "absolute";
+            locationDes.style.left = "30px";
+            locationDes.style.top = "30px";
+            locationDes.innerHTML = "Welcome to Dratewka the Shoemaker's world!";
+
+            var locationImg = document.createElement("img");
+            locationImg.id = "locationImg";
+            locationImg.src = "img/47.gif";
+            locationImg.style.width = "512px";
+            locationImg.style.height = "320px";
+            locationImg.style.position = "absolute";
+            locationImg.style.left = "30px";
+            locationImg.style.top = "70px";
+            locationImg.style.backgroundColor = "rgb(255,190,99)";
+            locationImg.style.overflow = "hidden";
+            locationImg.style.zIndex = "100";
+
+            var ways = document.createElement("div");
+            ways.id = "ways";
+            ways.style.position = "absolute";
+            ways.style.left = "30px";
+            ways.style.top = "420px";
+            ways.innerHTML = "";
+
+            var compass = document.createElement("img");
+            compass.id = "compass";
+            compass.src = "img/kompas.bmp";
+            compass.style.width = "256px";
+            compass.style.height = "120px";
+            compass.style.position = "absolute";
+            compass.style.left = "600px";
+            compass.style.top = "160px";
+
+            var compass_west = document.createElement("div");
+            compass_west.id = "compass_west";
+            compass_west.style.position = "absolute";
+            compass_west.style.left = "580px";
+            compass_west.style.top = "200px";
+            compass_west.innerHTML = "";
+
+            var compass_north = document.createElement("div");
+            compass_north.id = "compass_north";
+            compass_north.style.position = "absolute";
+            compass_north.style.left = "706px";
+            compass_north.style.top = "140px";
+            compass_north.innerHTML = "";
+
+            var compass_east = document.createElement("div");
+            compass_east.id = "compass_east";
+            compass_east.style.position = "absolute";
+            compass_east.style.left = "850px";
+            compass_east.style.top = "200px";
+            compass_east.innerHTML = "";
+
+            var compass_south = document.createElement("div");
+            compass_south.id = "compass_south";
+            compass_south.style.position = "absolute";
+            compass_south.style.left = "716px";
+            compass_south.style.top = "270px";
+            compass_south.innerHTML = "";
+
+            var thingSeen = document.createElement("div");
+            thingSeen.id = "thingSeen";
+            thingSeen.style.position = "absolute";
+            thingSeen.style.left = "30px";
+            thingSeen.style.top = "460px";
+            thingSeen.innerHTML = "";
+
+            var thingCarried = document.createElement("div");
+            thingCarried.id = "thingCarried";
+            thingCarried.style.position = "absolute";
+            thingCarried.style.left = "30px";
+            thingCarried.style.top = "500px";
+            thingCarried.innerHTML = "";
+
+            var actionText = document.createElement("div");
+            actionText.id = "actionText";
+            actionText.style.position = "absolute";
+            actionText.style.left = "30px";
+            actionText.style.top = "560px";
+            actionText.innerHTML = "What now?";
+
+            var action = document.createElement("input");
+            action.type = "text";
+            action.id = "action";
+            action.style.position = "absolute";
+            action.style.left = "30px";
+            action.style.top = "600px";
+            action.style.width = "300px";
+            action.style.height = "30px";
+            action.style.outlineColor = "rgb(57, 57, 57)";
+            action.style.backgroundColor = "rgb(57, 57, 57)";
+            action.style.color = "rgb(165,172,178)";
+            action.style.border = "none";
+            action.style.fontFamily = "PressStart2P";
+            action.style.fontSize = "30px";
+            action.style.textTransform = "uppercase";
+
+            document.body.appendChild(locationDes);
+            document.body.appendChild(locationImg);
+            document.body.appendChild(ways);
+            document.body.appendChild(compass);
+            document.body.appendChild(compass_west);
+            document.body.appendChild(compass_north);
+            document.body.appendChild(compass_east);
+            document.body.appendChild(compass_south);
+            document.body.appendChild(thingSeen);
+            document.body.appendChild(thingCarried);
+            document.body.appendChild(actionText);
+            document.body.appendChild(action);
+        }
+        function Przedmiot() { this.id = arguments[0]; this.przedmiot_w_odmianie = arguments[1]; this.flaga = arguments[2]; this.nazwa_przedmiotu = arguments[3]; }
+        function Zaleznosc() { this.uzyty_przedmiot = arguments[0]; this.lokacja_y = arguments[1]; this.lokacja_x = arguments[2]; this.wynik_uzycia = arguments[3]; this.komunikat = arguments[4]; this.OK = arguments[5]; this.na_lokacji = arguments[6] }
+        gra = {
+         x: 6,
+         y: 3,
+            //// kierunki w tablicy po kolei: zachód - północ - wschód - południe
+            lokacja: [
+                    [new Lokacja("You are inside a brimstone mine", [0,0,1,0], "img/11.gif", "rgb(235,211,64)", []), new Lokacja("You are at the entrance to the mine", [1,0,1,0], "img/12.gif", "rgb(89,93,87)", []), new Lokacja("A hill",[1,0,1,1], "img/13.gif", "rgb(117,237,243)", [31]), new Lokacja("Some bushes",[1,0,1,0], "img/14.gif", "rgb(202,230,51)", []), new Lokacja("An old deserted hut",[1,0,1,0], "img/15.gif", "rgb(220,204,61)", [27]), new Lokacja("The edge of a forest",[1,0,1,0], "img/16.gif", "rgb(167,245,63)", []), new Lokacja("A dark forest",[1,0,0,1], "img/17.gif", "rgb(140,253,99)", [14])],
+                    [ new Lokacja("A man nearby making tar", [0,0,1,1], "img/21.gif", "rgb(255,190,99)", []), new Lokacja("A timber yard",[1,0,1,1], "img/22.gif", "rgb(255,190,99)", []), new Lokacja("You are by a roadside shrine",[1,1,1,1], "img/23.gif", "rgb(167,245,63)", [10]), new Lokacja("You are by a small chapel",[1,0,1,0], "img/24.gif", "rgb(212,229,36)", []), new Lokacja("You are on a road leading to a wood",[1,0,1,1], "img/25.gif", "rgb(167,245,63)", []), new Lokacja("You are in a forest",[1,0,1,0], "img/26 i 65.gif", "rgb(167,245,63)", []), new Lokacja("You are in a deep forest",[1,1,0,0], "img/27 i 67.gif", "rgb(140,253,99)", [18])],
+                    [ new Lokacja("You are by the Vistula River",[0,1,1,0], "img/31.gif", "rgb(122,232,252)", []), new Lokacja("You are by the Vistula River",[1,1,0,0], "img/32.gif", "rgb(140,214,255)", [32]), new Lokacja("You are on a bridge over river",[0,1,0,1], "img/33.gif", "rgb(108,181,242)", []), new Lokacja("You are by the old tavern",[0,0,1,0], "img/34.gif", "rgb(255,189,117)", []), new Lokacja("You are at the town's end",[1,1,0,1], "img/35.gif", "rgb(255,190,99)", []), new Lokacja("You are in a butcher's shop",[0,0,0,1], "img/36.gif", "rgb(255,188,102)", []), new Lokacja("You are in a cooper's house",[0,0,0,1], "img/37.gif", "rgb(255,188,102)", [])],
+                    [ new Lokacja("You are in the Wawel Castle",[0,0,0,0], "img/41.gif", "rgb(255,176,141)", []), new Lokacja("You are inside a dragon's cave",[1,0,1,0], "img/42.gif", "rgb(198,205,193)", []), new Lokacja("A perfect place to set a trap",[1,1,0,0], "img/43.gif", "rgb(255,176,141)", []), new Lokacja("You are by the water mill",[0,0,1,0], "img/44.gif", "rgb(255,190,99)", [21]), new Lokacja("You are at a main crossroad",[1,1,1,1], "img/45.gif", "rgb(255,190,99)", []), new Lokacja("You are on a town street",[1,1,1,0], "img/46.gif", "rgb(255,190,99)", []), new Lokacja("You are in a frontyard of your house",[1,1,0,1], "img/47.gif", "rgb(255,190,99)", [])],
+                    [ new Lokacja, new Lokacja, new Lokacja, new Lokacja("You are by a swift stream",[0,0,1,0], "img/54.gif", "rgb(108,181,242)", [24]), new Lokacja("You are on a street leading forest",[1,1,0,1], "img/55.gif", "rgb(255,190,99)", []), new Lokacja("You are in a woodcutter's backyard",[0,0,0,1], "img/56.gif", "rgb(255,190,99)", []), new Lokacja("You are in a shoemaker's house",[0,1,0,0], "img/57.gif", "rgb(254,194,97)", [])],
+                    [ new Lokacja, new Lokacja, new Lokacja, new Lokacja("You are in a bleak funeral house",[0,0,1,0], "img/64.gif", "rgb(254,194,97)", []), new Lokacja("You are on a path leading to the wood",[1,1,1,0], "img/26 i 65.gif", "rgb(167,245,63)", []), new Lokacja("You are at the edge of a forest",[1,1,1,0], "img/66.gif", "rgb(167,245,63)", []), new Lokacja("You are in a deep forest",[1,0,0,0], "img/27 i 67.gif", "rgb(140,253,99)", [])],
+            ],
+
+            przedmioty: [
+            new Przedmiot("10", "a KEY", "1", "key"),
+            new Przedmiot("11", "an AXE", "1", "axe"),
+            new Przedmiot("12", "STICKS", "1", "sticks"),
+            new Przedmiot("13", "sheeplegs", "0", "sheeplegs"),
+            new Przedmiot("14", "MUSHROOMS", "1", "mushrooms"),
+            new Przedmiot("15", "MONEY", "1", "money"),
+            new Przedmiot("16", "a BARREL", "1", "barrel"),
+            new Przedmiot("17", "a sheeptrunk", "0", "sheeptrunk"),
+            new Przedmiot("18", "BERRIES", "1", "berries"),
+            new Przedmiot("19", "WOOL", "1", "wool"),
+            new Przedmiot("20", "a sheepskin", "0", "sheepskin"),
+            new Przedmiot("21", "a BAG", "1", "bag"),
+            new Przedmiot("22", "a RAG", "1", "rag"),
+            new Przedmiot("23", "a sheephead", "0", "sheephead"),
+            new Przedmiot("24", "a SPADE", "1", "spade"),
+            new Przedmiot("25", "SULPHUR", "1", "sulphur"),
+            new Przedmiot("26", "a solid poison", "0", "solid poison"),
+            new Przedmiot("27", "a BUCKET", "1", "bucket"),
+            new Przedmiot("28", "TAR", "1", "tar"),
+            new Przedmiot("29", "a liquid poison", "0", "liquid poison"),
+            new Przedmiot("30", "a dead dragon", "0", "dead dragon"),
+            new Przedmiot("31", "a STONE", "1", "stone"),
+            new Przedmiot("32", "a FISH", "1", "fish"),
+            new Przedmiot("33", "a KNIFE", "1", "knife"),
+            new Przedmiot("34", "a DRAGONSKIN", "1", "dragonskin"),
+            new Przedmiot("35", "a dragonskin SHOES", "1", "shoes"),
+            new Przedmiot("36", "a PRIZE", "1", "prize"),
+            new Przedmiot("37", "a SHEEP", "1", "sheep"),
+            ],
+
+            zaleznosci: [
+            new Zaleznosc("10", "4", "5", "11", "You opened a tool shed and took an axe.", "0", "0"),
+            new Zaleznosc("11", "5", "6", "12", "You cut sticks for sheeplegs!", "0", "0"),
+            new Zaleznosc("12", "3", "2", "13", "You prepared legs for your fake sheep!", "1", "1"),
+            new Zaleznosc("14", "2", "3", "15", "The tavern owner paid you money.", "0", "0"),
+            new Zaleznosc("15", "2", "6", "16", "The cooper sold you a new barrel.", "0", "0"),
+            new Zaleznosc("16", "3", "2", "17", "You made a nice sheeptrunk.", "1", "1"),
+            new Zaleznosc("18", "2", "5", "19", "The butcher gave you wool.", "0", "0"),
+            new Zaleznosc("19", "3", "2", "20", "You prepared skin for your fake sheep.", "1", "1"),
+            new Zaleznosc("21", "4", "6", "22", "You used your tools to make a rag.", "0", "0"),
+            new Zaleznosc("22", "3", "2", "23", "You made a fake sheephead!", "1", "1"),
+            new Zaleznosc("24", "0", "0", "25", "You are digging...and digging...That's enough sulphur for you.", "1", "0"),
+            new Zaleznosc("25", "3", "2", "26", "You prepared a solid poison.", "1", "1"),
+            new Zaleznosc("27", "1", "0", "28", "You got a bucket full of tar.", "0", "0"),
+            new Zaleznosc("28", "3", "2", "29", "You prepared a liquid poison.", "1", "1"),
+            new Zaleznosc("", "3", "2", "37", "Your fake sheep is full of poison and ready to be eaten by the dragon!", "0", ""),
+            new Zaleznosc("37", "3", "2", "30", "The dragon noticed your gift...!The dragon ate your sheep and died!", "0", "1"),
+            new Zaleznosc("33", "3", "2", "34", "You cut a piece of dragon's skin.", "0", ""),
+            new Zaleznosc("34", "4", "6", "35", "You used your tools to make shoes.", "0", "0"),
+            new Zaleznosc("35", "3", "0", "36", "The King is impressed by your shoes!", "0", ""),
+            new Zaleznosc("36", "", "", "", "The game is over!", ""),
+            ],
+            
+            twojPrzedmiot: [],
+
+            tworzLokacje: function() {
+                console.log("Tworzy lokacje: ", this.y, this.x)
+                var z = document.getElementById("ways");
+                var compW = document.getElementById("compass_west");
+                var compN = document.getElementById("compass_north");
+                var compE = document.getElementById("compass_east");
+                var compS = document.getElementById("compass_south");
+                var w = "";
+                var n = "";
+                var e = "";
+                var s = "";
+                if (this.lokacja[this.y][this.x].kierunki[0] == 1) {
+                    w = "WEST ";
+                    compW.innerHTML = "W";
+                } else {
+                    compW.innerHTML = "";
+                }
+                if (this.lokacja[this.y][this.x].kierunki[1] == 1) {
+                    n = "NORTH ";
+                    compN.innerHTML = "N";
+                } else {
+                    compN.innerHTML = "";
+                }
+                if (this.lokacja[this.y][this.x].kierunki[2] == 1) {
+                    e = "EAST ";
+                    compE.innerHTML = "E";
+                } else {
+                    compE.innerHTML = "";
+                }
+                if (this.lokacja[this.y][this.x].kierunki[3] == 1) {
+                    s = "SOUTH ";
+                    compS.innerHTML = "S";
+                } else {
+                    compS.innerHTML = "";
+                }
+                z.innerHTML = "You can go: " + w + n + e + s;
+                
+                var itemText = document.getElementById("thingSeen");
+                var item = "";
+                if (this.lokacja[this.y][this.x].item[0] != undefined) {
+                    for (var i = 0; i < this.przedmioty.length; i++) {
+                        for (var j = 0; j < this.lokacja[this.y][this.x].item.length; j++) {
+                            if (this.przedmioty[i].id == this.lokacja[this.y][this.x].item[j])
+                                item += this.przedmioty[i].przedmiot_w_odmianie + " ";
+                        }
+                    }
+                
+                }else{
+                 item = "nothing.";   
+                }
+                itemText.innerHTML = "You see " + item;
+                
+                var carriedItemText = document.getElementById("thingCarried");
+                var carried = "";
+                if(gra.twojPrzedmiot[0] != undefined)
+                {
+                carried = gra.twojPrzedmiot[0].przedmiot_w_odmianie;
+                }else{
+                carried = "nothing.";
+                }
+                carriedItemText.innerHTML = "You are carrying " + carried;
+                
+                var inp = document.getElementById("action");
+                inp.focus();
+            },
+            
+            init: function(){
+                var that = this;
+                var smok = false;
+                var milestone = 0;
+                console.log(that.lokacja[that.y][that.x])
+                document.body.onkeypress = function (e) {
+
+                    
+                    if (e.which == 13) {
+                        var choice = document.getElementById("action").value;
+                        var split = choice.split(" ");
+                        //zachód
+                        if(choice == "west" || choice == "w"){
+                            if (that.lokacja[that.y][that.x].kierunki[0] == 1) {
+                                if (that.y == 3 && that.x == 1 && smok == false) {
+                                    var el2 = document.getElementById("actionText");
+                                    el2.innerHTML = "You can't go that way...";
+                                    setTimeout(function () {
+                                        el2.innerHTML += "The dragon sleeps in a cave!";
+                                    }, 800);
+                                    setTimeout(function () {
+                                        el2.innerHTML = "What now?";
+                                    }, 3000);
+                                } else {
+                                    that.x--;
+                                    var el2 = document.getElementById("actionText");
+                                    el2.innerHTML = "You are going west...";
+                                    setTimeout(function () {
+                                        var el = document.getElementById("locationDes");
+                                        el.innerHTML = that.lokacja[that.y][that.x].miejsce;
+                                        el2.innerHTML = "What now?";
+                                        var el3 = document.getElementById("locationImg");
+                                        el3.src = that.lokacja[that.y][that.x].img;
+                                        el3.style.backgroundColor = that.lokacja[that.y][that.x].kolor;
+                                    }, 1500);
+                                }
+                            }
+                            else {
+                                var el = document.getElementById("actionText");
+                                el.innerHTML = "You can't go that way. What now?";
+                                console.log("You cannot go that way");
+                            }
+                            var inp = document.getElementById("action");
+                            inp.value = "";
+                        }
+                                
+                            //północ
+                        else if( choice == "north" || choice == "n"){
+                            if (that.lokacja[that.y][that.x].kierunki[1] == 1) {
+                                that.y--;
+                                var el2 = document.getElementById("actionText");
+                                el2.innerHTML = "You are going north...";
+                                setTimeout(function () {
+                                    var el = document.getElementById("locationDes");
+                                    el.innerHTML = that.lokacja[that.y][that.x].miejsce;
+                                    el2.innerHTML = "What now?";
+                                    var el3 = document.getElementById("locationImg");
+                                    el3.src = that.lokacja[that.y][that.x].img;
+                                    el3.style.backgroundColor = that.lokacja[that.y][that.x].kolor;
+                                }, 1500);
+                            }
+                            else {
+                                var el = document.getElementById("actionText");
+                                el.innerHTML = "You can't go that way. What now?";
+                                console.log("You cannot go that way");
+                            }
+                            var inp = document.getElementById("action");
+                            inp.value = "";
+                        }
+
+                            //wschód
+                        else if(choice == "east" || choice == "e"){
+                            if (that.lokacja[that.y][that.x].kierunki[2] == 1) {
+                                that.x++;
+                                var el2 = document.getElementById("actionText");
+                                el2.innerHTML = "You are going east...";
+                                setTimeout(function () {
+                                    var el = document.getElementById("locationDes");
+                                    el.innerHTML = that.lokacja[that.y][that.x].miejsce;
+                                    el2.innerHTML = "What now?";
+                                    var el3 = document.getElementById("locationImg");
+                                    el3.src = that.lokacja[that.y][that.x].img;
+                                    el3.style.backgroundColor = that.lokacja[that.y][that.x].kolor;
+                                }, 1500);
+                            }
+                            else {
+                                var el = document.getElementById("actionText");
+                                el.innerHTML = "You can't go that way. What now?";
+                                console.log("You cannot go that way");
+                            }
+                            var inp = document.getElementById("action");
+                            inp.value = "";
+                        }
+
+                            //południe
+                        else if(choice == "south" || choice == "s"){
+                            if (that.lokacja[that.y][that.x].kierunki[3] == 1) {
+                                that.y++;
+                                var el2 = document.getElementById("actionText");
+                                el2.innerHTML = "You are going south...";
+                                setTimeout(function () {
+                                    var el = document.getElementById("locationDes");
+                                    el.innerHTML = that.lokacja[that.y][that.x].miejsce;
+                                    el2.innerHTML = "What now?";
+                                    var el3 = document.getElementById("locationImg");
+                                    el3.src = that.lokacja[that.y][that.x].img;
+                                    el3.style.backgroundColor = that.lokacja[that.y][that.x].kolor;
+                                }, 1500); 
+                            }
+                            else {
+                                var el = document.getElementById("actionText");
+                                el.innerHTML = "You can't go that way. What now?";
+                                console.log("You cannot go that way");
+                            }
+                            var inp = document.getElementById("action");
+                            inp.value = "";
+                        }
+                        
+                            //podnoszenie przedmiotu
+                        else if (split[0] == "take" || split[0] == "t") {
+                            var el = document.getElementById("actionText");
+                            var itemNr = null;
+                            for (var i = 0; i < that.przedmioty.length; i++) {
+                                if (that.przedmioty[i].id == that.lokacja[that.y][that.x].item[0])
+                                    itemNr = i;
+                            }
+                            if(that.lokacja[that.y][that.x].item[0] == undefined)
+                            {
+                                el.innerHTML = "There isn't anything like that here. What now?";
+                            }   
+                            else if (choice == "take " + gra.przedmioty[itemNr].nazwa_przedmiotu || choice == "t " + gra.przedmioty[itemNr].nazwa_przedmiotu) {
+                                if(gra.przedmioty[itemNr].flaga == 0)
+                                {
+                                    var el = document.getElementById("actionText");
+                                    el.innerHTML = "You can't carry it. What now?";
+                                } else {
+                                    console.log(that.twojPrzedmiot[0]);
+                                    var el = document.getElementById("actionText");
+                                    if (that.twojPrzedmiot[0] == undefined) {
+                                        var el2 = that.przedmioty[itemNr].przedmiot_w_odmianie;
+                                        el.innerHTML = "You are taking " + el2;
+                                        that.twojPrzedmiot[0] = that.przedmioty[itemNr];
+                                        console.log(that.twojPrzedmiot[0]);
+                                        that.lokacja[that.y][that.x].item.splice(0,1);
+                                    } else if(that.twojPrzedmiot[0] != undefined) {
+                                        el.innerHTML = "You are carrying something!";
+                                    }
+                                }
+                            }
+                            setTimeout(function () {
+                                el.innerHTML = "What now?";
+                            }, 2000); 
+                        }
+
+                            //wyrzucanie przedmiotu
+                        else if (split[0] == "drop" || split[0] == "d") {
+                            var el = document.getElementById("actionText");
+                            if (that.twojPrzedmiot[0] == undefined) {
+                                el.innerHTML = "You are not carrying anything!";
+                            } else if (choice == "drop " + that.twojPrzedmiot[0].nazwa_przedmiotu || choice == "d " + that.twojPrzedmiot[0].nazwa_przedmiotu) {
+                                if (that.lokacja[that.y][that.x].item.length >= 6) {
+                                    el.innerHTML = "You can't store any more here!";
+                                } else {
+                                    el.innerHTML = "You are about to drop " + that.twojPrzedmiot[0].przedmiot_w_odmianie;
+                                    that.lokacja[that.y][that.x].item.push(that.twojPrzedmiot[0].id);
+                                    console.log(that.lokacja[that.y][that.x].item.length)
+                                    that.twojPrzedmiot[0] = undefined;
+                                }
+                            } else if (split[1] != that.twojPrzedmiot[0].nazwa_przedmiotu) {
+                                el.innerHTML = "You are not carrying it!";
+                            }
+                            setTimeout(function () {
+                                el.innerHTML = "What now?";
+                            }, 2000);
+                        }
+
+                            //użycie przedmiotu
+                        else if (split[0] == "use" || split[0] == "u") {
+                            var el = document.getElementById("actionText");
+                            var zaleznoscNr = null;
+                            var przedmiotNr = null;
+                            if (that.twojPrzedmiot[0] == undefined) {
+                                el.innerHTML = "You are not carrying anything like that!";
+                            } else {
+                                if (choice == "use " + that.twojPrzedmiot[0].nazwa_przedmiotu || choice == "u " + that.twojPrzedmiot[0].nazwa_przedmiotu) {
+                                    for (var i = 0; i < that.zaleznosci.length; i++) {
+                                        if (that.zaleznosci[i].uzyty_przedmiot == that.twojPrzedmiot[0].id) {
+                                            zaleznoscNr = i;
+                                        }
+                                    }
+                                    for (var i = 0; i < that.przedmioty.length; i++) {
+                                        if (that.przedmioty[i].id == that.zaleznosci[zaleznoscNr].wynik_uzycia) {
+                                            przedmiotNr = i;
+                                        }
+                                    }
+
+                                    if (that.y == that.zaleznosci[zaleznoscNr].lokacja_y && that.x == that.zaleznosci[zaleznoscNr].lokacja_x) {
+                                        if (that.y == 3 && that.x == 2 && that.zaleznosci[zaleznoscNr].uzyty_przedmiot == 33 && smok == false) {
+                                            el.innerHTML = "Nothing happened.";
+                                        }
+                                        else if (that.zaleznosci[zaleznoscNr].uzyty_przedmiot == 36) {
+                                            el.innerHTML = that.zaleznosci[zaleznoscNr].komunikat;
+                                            var end = document.getElementById("locationImg");
+                                            end.src = "img/end.jpg";
+                                            end.style.width = "512px";
+                                            end.style.height = "320px";
+                                            end.style.position = "absolute";
+                                            end.style.left = "30px";
+                                            end.style.top = "70px";
+                                            end.style.overflow = "hidden";
+                                        }
+                                        else {
+                                            if (that.y == 3 && that.x == 2 && that.zaleznosci[zaleznoscNr].uzyty_przedmiot == 37) {
+                                                var splitText = that.zaleznosci[zaleznoscNr].komunikat.split("!");
+                                                el.innerHTML = splitText[0];
+                                                setTimeout(function () {
+                                                    el.innerHTML = splitText[1];
+                                                    var dragon = document.getElementById("locationImg");
+                                                    dragon.src = "img/smok.bmp";
+                                                    dragon.style.width = "512px";
+                                                    dragon.style.height = "320px";
+                                                    dragon.style.position = "absolute";
+                                                    dragon.style.left = "30px";
+                                                    dragon.style.top = "70px";
+                                                    dragon.style.backgroundColor = "rgb(153,0,0)";
+                                                    dragon.style.overflow = "hidden";
+                                                }, 3000);
+                                                smok = true;
+                                            } else {
+                                                el.innerHTML = that.zaleznosci[zaleznoscNr].komunikat;
+                                            }
+
+                                            if (that.zaleznosci[zaleznoscNr].na_lokacji == 1) {
+                                                that.lokacja[that.y][that.x].item.push(that.zaleznosci[zaleznoscNr].wynik_uzycia);
+                                                that.twojPrzedmiot[0] = undefined;
+                                                if (that.y == 3 && that.x == 2 && that.zaleznosci[zaleznoscNr].OK == 1) {
+                                                    milestone++;
+                                                    if (milestone == 6) {
+                                                        setTimeout(function () {
+                                                            el.innerHTML = that.zaleznosci[14].komunikat;
+                                                            that.lokacja[that.y][that.x].item.splice(0, 6, that.zaleznosci[14].wynik_uzycia);
+                                                            that.twojPrzedmiot[0] = undefined;
+                                                            milestone++;
+                                                        }, 2000);
+                                                    }
+                                                }
+
+                                            }
+                                            else if (that.zaleznosci[zaleznoscNr].na_lokacji == 0) {
+                                                that.twojPrzedmiot.splice(0, 1, that.przedmioty[przedmiotNr]);
+                                            }
+                                        }
+                                    } else {
+                                        el.innerHTML = "Nothing happened.";
+                                    }
+
+
+                                } else {
+                                    el.innerHTML = "You are not carrying anything like that!";
+                                }
+                                
+                            }
+                            setTimeout(function () {
+                                el.innerHTML = "What now?";
+                            }, 2000);
+                        }
+
+                        //gossips
+                        else if (choice == "gossips" || choice == "g") {
+                            var el = document.getElementById("actionText");
+                            el.style.position = "absolute";
+                            el.style.left = "30px";
+                            el.style.top = "650px";
+                            el.innerHTML = "The  woodcutter lost  his home key...</br> The butcher likes fruit... The cooper </br> is greedy... Dratewka plans to make a </br> poisoned  bait for the dragon...  The </br>tavern owner is buying food  from the </br>pickers... Making a rag from a bag...";
+                            setTimeout(function () {
+                                el.style.position = "absolute";
+                                el.style.left = "30px";
+                                el.style.top = "560px";
+                                el.innerHTML = "What now?";
+                            }, 4000);
+                        }
+                            //vocabulary
+                        else if (choice == "vocabulary" || choice == "v") {
+                            el.style.position = "absolute";
+                            el.style.left = "30px";
+                            el.style.top = "650px";
+                            var el = document.getElementById("actionText");
+                            el.innerHTML = "NORTH or N, SOUTH or S</br>WEST or W, EAST or E</br>TAKE (object) or T (object)</br>DROP (object) or D (object)</br>USE (object) or U (object)</br>GOSSIPS or G, VOCABULARY or V"
+                            setTimeout(function () {
+                                el.style.position = "absolute";
+                                el.style.left = "30px";
+                                el.style.top = "560px";
+                                el.innerHTML = "What now?";
+                            }, 4000);
+                        }
+                        else {
+                            var el = document.getElementById("actionText");
+                            el.innerHTML = "Try another word or V for vocabulary";
+                            setTimeout(function () {
+                                el.innerHTML = "What now?";
+                            }, 2000);
+                        }
+                            
+                        }
+
+                that.tworzLokacje();
+                }
+                
+            }
+        }
+        document.addEventListener("DOMContentLoaded", function (event) {
+            menu();
+            gra.init();
+            gra.tworzLokacje();
+            Lokacja();
+            Przedmiot();
+            Zaleznosc();
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>
